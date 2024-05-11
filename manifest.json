@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-multiple-daily-notes",
+	"name": "Multiple Daily Notes",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Customizable configuration for multiple daily notes",
+	"author": "Eddy Moulton",
+	"authorUrl": "https://github.com/eddymoulton",
+	"isDesktopOnly": false
+}
