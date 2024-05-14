@@ -38,22 +38,14 @@ export default class MultipleDailyNotes extends Plugin {
   }
 
   async loadSettings() {
-    console.log("saved data");
-    console.log(await this.loadData());
-
     this.settings = Object.assign(
       {},
       { dailyNotes: [] },
       await this.loadData()
     );
-
-    console.log("settings");
-    console.log(this.settings);
   }
 
   public async saveSettings() {
-    console.log("saving data");
-    console.log(this.settings);
     await this.saveData(this.settings);
   }
 
@@ -62,9 +54,9 @@ export default class MultipleDailyNotes extends Plugin {
       return;
     }
 
-    console.log(note.folder);
-
-    this.app.vault.createFolder(note.folder);
+    if (!this.app.vault.getFolderByPath(note.folder)) {
+      this.app.vault.createFolder(note.folder);
+    }
 
     let dateToUse = window.moment();
 

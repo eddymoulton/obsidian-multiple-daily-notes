@@ -16,9 +16,6 @@ export class SettingsTab extends PluginSettingTab {
     containerEl.empty();
 
     this.plugin.settings.dailyNotes.forEach((dailyNote) => {
-      console.log("display settings");
-      console.log(dailyNote);
-
       const setting = new Setting(containerEl);
       containerEl.createDiv({ text: dailyNote.name });
 
@@ -38,8 +35,8 @@ export class SettingsTab extends PluginSettingTab {
             .setTooltip("Edit")
             .onClick(async () => {
               new SettingsModal(this.plugin, dailyNote)
-                .onSubmit(async (ribbon) => {
-                  updateNote(this.plugin, ribbon);
+                .onSubmit(async (note) => {
+                  updateNote(this.plugin, note);
                   this.display();
                 })
                 .open();
@@ -62,7 +59,6 @@ export class SettingsTab extends PluginSettingTab {
             notePeriod: "day",
           })
             .onSubmit(async (dailyNote) => {
-              console.log(this.plugin.settings);
               addNote(this.plugin, dailyNote);
               this.display();
             })

@@ -89,6 +89,7 @@ export class SettingsModal extends Modal {
           .addOption("day", "Daily")
           .addOption("week", "Weekly")
           .addOption("year", "Yearly")
+          .setValue(this.dailyNote.notePeriod || "day")
           .onChange(
             (value) => (this.dailyNote.notePeriod = value as NotePeriod)
           );
