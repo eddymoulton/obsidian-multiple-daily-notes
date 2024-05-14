@@ -4,6 +4,8 @@ export class MultipleDailyNotesSettings {
   dailyNotes: DailyNoteConfiguration[];
 }
 
+export type NotePeriod = "day" | "week" | "year";
+
 export class DailyNoteConfiguration {
   id: string;
   name: string;
@@ -11,6 +13,7 @@ export class DailyNoteConfiguration {
   template: string;
   folder: string;
   noteNameTemplate: string;
+  notePeriod: NotePeriod;
 }
 
 export async function deleteNote(

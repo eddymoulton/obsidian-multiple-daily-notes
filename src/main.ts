@@ -66,9 +66,18 @@ export default class MultipleDailyNotes extends Plugin {
 
     this.app.vault.createFolder(note.folder);
 
-    const path = `${note.folder}/${window
-      .moment()
-      .format(note.noteNameTemplate)}.md`;
+    let dateToUse = window.moment();
+
+    switch (note.notePeriod) {
+      case "year":
+        dateToUse = dateToUse.dayOfYear(1);
+        break;
+      case "week":
+        dateToUse = dateToUse.weekday(1);
+        break;
+    }
+
+    const path = `${note.folder}/${dateToUse.format(note.noteNameTemplate)}.md`;
 
     const result = await this.copyFromTemplate(path, note.template);
 

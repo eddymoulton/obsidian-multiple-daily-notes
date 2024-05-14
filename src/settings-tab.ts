@@ -59,6 +59,7 @@ export class SettingsTab extends PluginSettingTab {
             template: "",
             folder: "",
             noteNameTemplate: "YYYY-MM-DD",
+            notePeriod: "day",
           })
             .onSubmit(async (dailyNote) => {
               console.log(this.plugin.settings);

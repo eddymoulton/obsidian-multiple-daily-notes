@@ -1,5 +1,5 @@
 import { Modal, Plugin, Setting } from "obsidian";
-import { DailyNoteConfiguration } from "./models/settings";
+import { DailyNoteConfiguration, NotePeriod } from "./models/settings";
 
 export class SettingsModal extends Modal {
   private dailyNote: DailyNoteConfiguration;
@@ -81,6 +81,19 @@ export class SettingsModal extends Modal {
       this.dailyNote.noteNameTemplate,
       (value) => (this.dailyNote.noteNameTemplate = value)
     );
+
+    new Setting(content)
+      .setName("Period")
+      .addDropdown((component) => {
+        component
+          .addOption("day", "Daily")
+          .addOption("week", "Weekly")
+          .addOption("year", "Yearly")
+          .onChange(
+            (value) => (this.dailyNote.notePeriod = value as NotePeriod)
+          );
+      })
+      .setDisabled(false);
 
     new Setting(content).addButton((button) => {
       return button
