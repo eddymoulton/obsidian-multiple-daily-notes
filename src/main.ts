@@ -61,7 +61,7 @@ export default class MultipleDailyNotes extends Plugin {
         dateToUse = dateToUse.dayOfYear(1);
         break;
       case "week":
-        dateToUse = dateToUse.weekday(2);
+        dateToUse = dateToUse.weekday(1);
         break;
     }
 
