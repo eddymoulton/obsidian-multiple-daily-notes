@@ -1,5 +1,5 @@
 import { Modal, Setting, setIcon } from "obsidian";
-import { DailyNoteConfiguration } from "./models/settings";
+import { DailyNoteConfiguration, type NotePeriod } from "./models/settings";
 import { IconPickerModal } from "./icon-picker";
 import type MultipleDailyNotes from "./main";
 
@@ -87,6 +87,20 @@ export class SettingsModal extends Modal {
       this.dailyNote.noteNameTemplate,
       (value) => (this.dailyNote.noteNameTemplate = value)
     );
+
+    new Setting(content)
+      .setName("Period")
+      .addDropdown((component) => {
+        component
+          .addOption("day", "Daily")
+          .addOption("week", "Weekly")
+          .addOption("year", "Yearly")
+          .setValue(this.dailyNote.notePeriod || "day")
+          .onChange(
+            (value) => (this.dailyNote.notePeriod = value as NotePeriod)
+          );
+      })
+      .setDisabled(false);
 
     new Setting(content).addButton((button) => {
       return button
