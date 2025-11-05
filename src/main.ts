@@ -54,25 +54,33 @@ export default class MultipleDailyNotes extends Plugin {
       return;
     }
 
+    let dateToUse = window.moment();
+
+    switch (note.notePeriod) {
+      case "year":
+        dateToUse = dateToUse.dayOfYear(1);
+        break;
+      case "week":
+        dateToUse = dateToUse.weekday(2);
+        break;
+    }
+
     var folder = note.folder;
 
     if (note.templatedFolder) {
-      const folderPath = window.moment().format(note.templatedFolder);
+      const folderPath = dateToUse.format(note.templatedFolder);
       folder = `${folder}/${folderPath}`;
     }
 
-    console.log(folder);
+    if (!this.app.vault.getFolderByPath(folder)) {
+      this.app.vault.createFolder(folder);
+    }
 
-    this.app.vault.createFolder(folder);
+    const path = `${folder}/${dateToUse.format(note.noteNameTemplate)}.md`;
+    const copy = await this.copyFromTemplate(path, note.template);
 
-    const path = `${folder}/${window
-      .moment()
-      .format(note.noteNameTemplate)}.md`;
-
-    const result = await this.copyFromTemplate(path, note.template);
-
-    if (result) {
-      this.app.workspace.getLeaf().openFile(result);
+    if (copy) {
+      this.app.workspace.getLeaf().openFile(copy);
     }
   }
 
