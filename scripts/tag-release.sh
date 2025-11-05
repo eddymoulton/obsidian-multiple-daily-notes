@@ -67,6 +67,8 @@ esac
 
 echo "Bumping version from $CURRENT to $NEW_VERSION"
 
+jq --arg version "$NEW_VERSION" '.version = $version' package.json > package.json.tmp && mv package.json.tmp package.json
+jq --arg version "$NEW_VERSION" '.version = $version' manifest.json > manifest.json.tmp && mv manifest.json.tmp manifest.json
 npm run version
 
 # Confirmation before git operations
