@@ -3,7 +3,7 @@
 	"name": "Multiple Daily Notes",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Multiple templated daily notes with configurable keyboard shortcuts folder structure",
+	"description": "Manage multiple templated daily notes with configurable keyboard shortcuts folder structure",
 	"author": "Eddy Moulton",
 	"authorUrl": "https://github.com/eddymoulton",
 	"isDesktopOnly": false
