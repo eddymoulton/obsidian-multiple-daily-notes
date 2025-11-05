@@ -6,7 +6,7 @@ import {
 import { SettingsTab } from "./settings-tab";
 
 export default class MultipleDailyNotes extends Plugin {
-  settings: MultipleDailyNotesSettings;
+  settings: MultipleDailyNotesSettings = new MultipleDailyNotesSettings();
 
   async onload() {
     await this.loadSettings();
@@ -54,22 +54,20 @@ export default class MultipleDailyNotes extends Plugin {
       return;
     }
 
-    if (!this.app.vault.getFolderByPath(note.folder)) {
-      this.app.vault.createFolder(note.folder);
+    var folder = note.folder;
+
+    if (note.templatedFolder) {
+      const folderPath = window.moment().format(note.templatedFolder);
+      folder = `${folder}/${folderPath}`;
     }
 
-    let dateToUse = window.moment();
+    console.log(folder);
 
-    switch (note.notePeriod) {
-      case "year":
-        dateToUse = dateToUse.dayOfYear(1);
-        break;
-      case "week":
-        dateToUse = dateToUse.weekday(2);
-        break;
-    }
+    this.app.vault.createFolder(folder);
 
-    const path = `${note.folder}/${dateToUse.format(note.noteNameTemplate)}.md`;
+    const path = `${folder}/${window
+      .moment()
+      .format(note.noteNameTemplate)}.md`;
 
     const result = await this.copyFromTemplate(path, note.template);
 

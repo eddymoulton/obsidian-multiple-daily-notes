@@ -1,13 +1,17 @@
-import { Modal, Plugin, Setting } from "obsidian";
-import { DailyNoteConfiguration, NotePeriod } from "./models/settings";
+import { Modal, Setting, setIcon } from "obsidian";
+import { DailyNoteConfiguration } from "./models/settings";
+import { IconPickerModal } from "./icon-picker";
+import type MultipleDailyNotes from "./main";
 
 export class SettingsModal extends Modal {
   private dailyNote: DailyNoteConfiguration;
+  private plugin: MultipleDailyNotes;
 
-  private onSubmitAction: (dailyNote: DailyNoteConfiguration) => Promise<void>;
+  private onSubmitAction(dailyNote: DailyNoteConfiguration) {}
 
-  constructor(plugin: Plugin, dailyNote: DailyNoteConfiguration) {
+  constructor(plugin: MultipleDailyNotes, dailyNote: DailyNoteConfiguration) {
     super(plugin.app);
+    this.plugin = plugin;
 
     this.dailyNote = Object.assign({}, dailyNote);
 
@@ -42,13 +46,7 @@ export class SettingsModal extends Modal {
 
     const content = root.createDiv();
 
-    this.createTextField(
-      content,
-      "Icon",
-      "Get icon names from lucide.dev",
-      this.dailyNote.icon,
-      (value) => (this.dailyNote.icon = value)
-    );
+    this.createIconPicker(content);
 
     this.createTextField(
       content,
@@ -76,25 +74,19 @@ export class SettingsModal extends Modal {
 
     this.createTextField(
       content,
+      "Templated folder",
+      "Optional date templated folder that will be used within the note folder",
+      this.dailyNote.templatedFolder,
+      (value) => (this.dailyNote.templatedFolder = value)
+    );
+
+    this.createTextField(
+      content,
       "New file name template",
       "Template to use when naming new files",
       this.dailyNote.noteNameTemplate,
       (value) => (this.dailyNote.noteNameTemplate = value)
     );
-
-    new Setting(content)
-      .setName("Period")
-      .addDropdown((component) => {
-        component
-          .addOption("day", "Daily")
-          .addOption("week", "Weekly")
-          .addOption("year", "Yearly")
-          .setValue(this.dailyNote.notePeriod || "day")
-          .onChange(
-            (value) => (this.dailyNote.notePeriod = value as NotePeriod)
-          );
-      })
-      .setDisabled(false);
 
     new Setting(content).addButton((button) => {
       return button
@@ -115,6 +107,37 @@ export class SettingsModal extends Modal {
     this.onSubmitAction = fn;
 
     return this;
+  }
+
+  private createIconPicker(element: HTMLElement) {
+    const setting = new Setting(element)
+      .setName("Icon")
+      .setDesc("Choose an icon from the Lucide icon set");
+
+    const controlsContainer = setting.controlEl.createDiv({
+      cls: "icon-picker-controls",
+    });
+
+    const iconPreview = controlsContainer.createDiv({
+      cls: "icon-picker-preview",
+    });
+
+    if (this.dailyNote.icon) {
+      setIcon(iconPreview, this.dailyNote.icon);
+    } else {
+      iconPreview.createDiv({ text: "No icon selected" });
+    }
+
+    const buttonContainer = controlsContainer.createDiv();
+    const button = buttonContainer.createEl("button", { text: "Choose Icon" });
+
+    button.addEventListener("click", () => {
+      new IconPickerModal(this.plugin, (icon) => {
+        this.dailyNote.icon = icon;
+        iconPreview.empty();
+        setIcon(iconPreview, icon);
+      }).open();
+    });
   }
 }
 

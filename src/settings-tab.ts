@@ -1,7 +1,13 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import MultipleDailyNotes from "./main";
 import { SettingsModal } from "./settings-modal";
-import { addNote, deleteNote, updateNote } from "./models/settings";
+import {
+  addNote,
+  deleteNote,
+  updateNote,
+  reorderNotes,
+  type NotePeriod,
+} from "./models/settings";
 
 export class SettingsTab extends PluginSettingTab {
   plugin: MultipleDailyNotes;
@@ -15,11 +21,9 @@ export class SettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    this.plugin.settings.dailyNotes.forEach((dailyNote) => {
-      const setting = new Setting(containerEl);
-      containerEl.createDiv({ text: dailyNote.name });
-
-      setting
+    this.plugin.settings.dailyNotes.forEach((dailyNote, index) => {
+      const setting = new Setting(containerEl)
+        .setName(dailyNote.name)
         .addExtraButton((button) => {
           button
             .setIcon("cross")
@@ -35,13 +39,15 @@ export class SettingsTab extends PluginSettingTab {
             .setTooltip("Edit")
             .onClick(async () => {
               new SettingsModal(this.plugin, dailyNote)
-                .onSubmit(async (note) => {
-                  updateNote(this.plugin, note);
+                .onSubmit(async (ribbon) => {
+                  updateNote(this.plugin, ribbon);
                   this.display();
                 })
                 .open();
             });
         });
+
+      this.attachDraggableHandlers(setting, index);
     });
 
     new Setting(containerEl).addButton((button) => {
@@ -55,10 +61,12 @@ export class SettingsTab extends PluginSettingTab {
             name: "",
             template: "",
             folder: "",
+            templatedFolder: "",
             noteNameTemplate: "YYYY-MM-DD",
-            notePeriod: "day",
+            notePeriod: "day" as NotePeriod,
           })
             .onSubmit(async (dailyNote) => {
+              console.log(this.plugin.settings);
               addNote(this.plugin, dailyNote);
               this.display();
             })
@@ -68,6 +76,53 @@ export class SettingsTab extends PluginSettingTab {
 
     containerEl.createDiv({
       text: "You must reload Obsidian after adding a new daily note to enable commands and hotkeys",
+    });
+  }
+
+  attachDraggableHandlers(setting: Setting, index: number) {
+    const settingEl = setting.settingEl;
+    settingEl.setAttribute("draggable", "true");
+    settingEl.style.cursor = "grab";
+
+    settingEl.dataset.index = index.toString();
+
+    settingEl.addEventListener("dragstart", (e: DragEvent) => {
+      settingEl.style.opacity = "0.5";
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", index.toString());
+      }
+    });
+
+    settingEl.addEventListener("dragend", (e: DragEvent) => {
+      settingEl.style.opacity = "1";
+    });
+
+    settingEl.addEventListener("dragover", (e: DragEvent) => {
+      e.preventDefault();
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = "move";
+      }
+      settingEl.style.borderTop = "2px solid var(--interactive-accent)";
+    });
+
+    settingEl.addEventListener("dragleave", (e: DragEvent) => {
+      settingEl.style.borderTop = "";
+    });
+
+    settingEl.addEventListener("drop", async (e: DragEvent) => {
+      e.preventDefault();
+      settingEl.style.borderTop = "";
+
+      if (e.dataTransfer) {
+        const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+        const toIndex = index;
+
+        if (fromIndex !== toIndex) {
+          await reorderNotes(this.plugin, fromIndex, toIndex);
+          this.display();
+        }
+      }
     });
   }
 }

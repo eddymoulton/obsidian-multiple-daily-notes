@@ -6,3 +6,50 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+/* Icon Picker Styles */
+.icon-picker-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-picker-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-secondary);
+}
+
+.icon-picker-preview svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-picker-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-picker-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.icon-picker-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-picker-text {
+  flex: 1;
+}
+
