@@ -51,7 +51,7 @@ export class SettingsModal extends Modal {
     this.createTextField(
       content,
       "Name",
-      "Display name of this daily note",
+      "Display name of this daily note configuration",
       this.dailyNote.name,
       (value) => (this.dailyNote.name = value)
     );
@@ -74,7 +74,7 @@ export class SettingsModal extends Modal {
 
     this.createTextField(
       content,
-      "Templated folder",
+      "Date templated folder",
       "Optional date templated folder that will be used within the note folder",
       this.dailyNote.templatedFolder,
       (value) => (this.dailyNote.templatedFolder = value)
@@ -82,8 +82,8 @@ export class SettingsModal extends Modal {
 
     this.createTextField(
       content,
-      "New file name template",
-      "Template to use when naming new files",
+      "New file name date template",
+      "Date template to use when naming new files",
       this.dailyNote.noteNameTemplate,
       (value) => (this.dailyNote.noteNameTemplate = value)
     );
