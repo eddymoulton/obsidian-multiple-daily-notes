@@ -62,6 +62,11 @@ export default class MultipleDailyNotes extends Plugin {
         break;
       case "week":
         dateToUse = dateToUse.weekday(1);
+
+        // If the week starts in the future, go back one week (we're still at sunday)
+        if (dateToUse.isBefore(window.moment())) {
+          dateToUse = window.moment().add(-1, "week").weekday(1);
+        }
         break;
     }
 
